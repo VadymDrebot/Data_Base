@@ -3,8 +3,10 @@ tel=input("input tel: ")
 email=input("input email: ")
 tel_em={'tel':tel,'email':email}
 print(tel_em)
-
 info1=dict.fromkeys([name],tel_em)
+print(info1)
+
+
 
 rost_ves={'rost': input("input rost: "), 'ves':input("input ves: ")}
 print(rost_ves)
