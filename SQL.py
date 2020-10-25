@@ -1,5 +1,5 @@
 import sqlite3 as sq
-with sq.connect("saper.db") as con:
+with sq.connect("tabl1.db") as con:
     cur=con.cursor()
 
     cur.execute("DROP TABLE worker")
@@ -8,9 +8,14 @@ with sq.connect("saper.db") as con:
     cur.executemany("INSERT INTO worker VALUES(?,?,?)",users)
 
     cur.execute("DROP TABLE salary")
-    cur.execute("""CREATE TABLE IF NOT EXISTS salary(id INTEGER PRIMARY KEY,month$ INTEGER,year$ INTEGER)""")
-    salaries=[(123,3000,36000),(456,4000,48000),(789,5000,60000)]
+    cur.execute("""CREATE TABLE IF NOT EXISTS salary(id INTEGER PRIMARY KEY,per_month INTEGER,bonus INTEGER)""")
+    salaries=[(123,3000,100),(456,4000,300),(789,5000,600)]
     cur.executemany("INSERT INTO salary VALUES(?,?,?)", salaries)
+
+    cur.execute("DROP TABLE position")
+    cur.execute("""CREATE TABLE IF NOT EXISTS position(id INTEGER PRIMARY KEY,positions TEXT,experience_year TEXT)""")
+    pos = [(123, 'director', '15'), (456, 'counter', '10'), (789, 'driver', '3')]
+    cur.executemany("INSERT INTO position VALUES(?,?,?)", pos)
 
     cur.execute("SELECT * FROM worker ")
     for i in cur:
@@ -24,8 +29,13 @@ with sq.connect("saper.db") as con:
     for i in cur:
         print(i)
 
-
-    cur.execute("""SELECT surname,month$ FROM worker JOIN salary ON worker.id=salary.id
-                WHERE month$>3500""")
+    cur.execute("SELECT * FROM position ")
     for i in cur:
-        print(i)
+        print(i,)
+
+
+
+#   cur.execute("""SELECT surname,per_month FROM worker JOIN salary ON worker.id=salary.id
+  #              WHERE per_month>3500""")
+   # for i in cur:
+    #    print(i)
