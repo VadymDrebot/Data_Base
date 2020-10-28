@@ -24,7 +24,7 @@ with sq.connect("tabl1.db") as con:
     cur.execute("""SELECT * FROM salary """ )
     for i in cur:
         print(i)
-
+   
     cur.execute("""SELECT * FROM position """)
     for i in cur:
         print(i)
