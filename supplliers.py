@@ -1,4 +1,5 @@
 import sqlite3
+
 def searching(): ############## поиск  и вывод на экран работника по ID,name or surname
     search=input("input id,name or surname: ")
     cur.execute("""SELECT id,surname,name FROM suppliers """)
@@ -27,22 +28,29 @@ cur = con.cursor()
 cur.execute("""PRAGMA foreign_keys = ON""")
 cur.execute("""DROP TABLE IF EXISTS suppliers""")
 cur.execute("""DROP TABLE IF EXISTS supply_group""")
-
+#cur.execute(""".headers on""")
+#cur.execute(""".mode column""")
+##########       SUPPLY_GROUP
 cur.execute("""CREATE TABLE IF NOT EXISTS supply_group(
                 group_id INTEGER PRIMARY KEY,group_name)""")
 groups = [(48, 'global'), (65, 'local')]
 cur.executemany("""INSERT INTO supply_group VALUES(?,?)""", groups)
-
+##########       SUPPLIERS
 cur.execute("""CREATE TABLE IF NOT EXISTS suppliers (
                 id INTEGER PRIMARY KEY,surname TEXT,name TEXT,group_id INTEGER NOT NULL,
                 FOREIGN KEY (group_id) REFERENCES supply_group (group_id)) """)
 users=[(12,'ivanov','ivan',48),(23,'petrov','petr',65),(45,'sidorov','sidr',48)]
 cur.executemany("""INSERT INTO suppliers VALUES(?,?,?,?)""",users)
+##########        SUPPLY_INFO
+#cur.execute("""CREATE TABLE IF NOT EXISTS supply_info(
+ #               surname TEXT PRIMARY KEY,tel INTEGER, email TEXT)""")
+#info = [(48, 'global'), (65, 'local')]
+#cur.executemany("""INSERT INTO supply_group VALUES(?,?)""", groups)
 
-con.commit()
 #####
 a=[78,'durov','dur',65]
 cur.execute("""INSERT INTO suppliers VALUES(?,?,?,?)""",a)
+
 
 cur.execute("""SELECT id,name,surname,group_id FROM suppliers """)
 for i in cur:
@@ -61,6 +69,7 @@ for i in cur:
    #     print(i)
 #print("")
 #searching()
+con.commit()
 con.close()
 
 
