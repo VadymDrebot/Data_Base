@@ -1,27 +1,123 @@
 from tkinter import *
-clicks = 0
+from tkinter.ttk import Radiobutton
+import sqlite3
+con = sqlite3.connect("suppliers.db")
+
 def click_button():
-    global clicks
-    clicks += 1
-    buttonText.set("Clicks{}".format(clicks))
+    if sel.get() == 1:
+        create_tables()
+    elif sel.get() == 2:
+        out_suplliers()
+    elif sel.get() == 3:
+        out_supply_group()
+    elif sel.get() == 4:
+        add_item()
+    elif sel.get() == 5:
+        find_item()
+    return
+
+#   lbl.configure(text="работаем...")    # изменение надписи слева
 ###################################
-def create_window(x,y):
-    root = Tk()
-    root.title(x)
-    root.geometry("400x300+200+300")
+def create_tables():
+    cur = con.cursor()
+    cur.execute("""DROP TABLE IF EXISTS suppliers""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS suppliers (
+                    id INTEGER PRIMARY KEY,surname TEXT,name TEXT,group_id INTEGER) """)
+    users = [(12, 'ivanov', 'ivan', 48), (23, 'petrov', 'petr', 65), (45, 'sidorov', 'sidr', 48)]
+    cur.executemany("""INSERT INTO suppliers VALUES(?,?,?,?)""", users)
 
-    btn = Button(root,text=y, padx="30",pady="30",command=click_button())
-    btn.pack()
-    root.mainloop()
+    cur.execute("""DROP TABLE IF EXISTS supply_group""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS supply_group(
+                        group_id INTEGER PRIMARY KEY,group_name)""")
+    groups = [(48, 'global'), (65, 'local')]
+    cur.executemany("""INSERT INTO supply_group VALUES(?,?)""", groups)
+    con.commit()
+    return
+##################################
+def out_suplliers():
+    cur = con.cursor()
+    cur.execute("""SELECT id,name,surname,group_id FROM suppliers """)
+    a = 200
+    for i in cur:
+        lbl_create = Label(window, text=i)
+        lbl_create.place(x=150, y=a)
+        a += 20
+    return
+########################################
+def out_supply_group():
+    cur = con.cursor()
+    cur.execute("""SELECT group_id,group_name FROM supply_group """)
+    for a in range(150,450,10):
+        lbl_create = Label(window, text="                              ")
+        lbl_create.place(x=150, y=a)
 
+    a = 200
+    for i in cur:
+        lbl_create = Label(window, text=i)
+        lbl_create.place(x=150, y=a)
+        a += 20
+ #   con.commit()
     return
 ###########################################
-#def create_button(x):
+def add_item():
+    cur = con.cursor()
 
- #   return
-#####################################
-window_name=input("name of window: ")
-button_name=input("input name of button: ")
-create_window(window_name,button_name)
-#create_button(button_name)
+    input_lbl = Label(window, text="input name")  # неактивна надпись слева
+    input_lbl.place(x=20, y=10)
+
+    txt = Entry(window, textvariable=message)  # ввод с клавиатуры
+    txt.place(x=120, y=10)
+    txt.focus()                             # фокус на окно ввода при запуске
+
+    id = message.get()                       # message= значение из окна ввода
+    a = [id,'durov', 'nam', 65]
+    cur.execute("""INSERT INTO suppliers (id,surname,name,group_id) VALUES (?,?,?,?)""",a)
+    con.commit()
+    return
+##########################
+def find_item():
+    input_lbl = Label(window, text=message.get())  # неактивна надпись слева
+    input_lbl.place(x=20, y=10)
+    return
+
+def delete():
+    lbl = Label(window, text="удалить запись?")  # неактивна надпись слева
+    lbl.grid(column=1, row=5)
+    return
+
+
+window = Tk()
+window.title("Работа с базами данных")   # заголовок окна
+window.geometry("500x400+600+400")       # ширина и высота окна со смещением
+
+input_lbl = Label(window,text=" input data")  # неактивна надпись слева
+input_lbl.place(x=20, y=10)
+
+message = StringVar()
+txt=Entry(window,textvariable=message)   # ввод с клавиатуры
+txt.place(x=120, y=10)
+txt.focus()                              # фокус на окно ввода при запуске
+message.get()                            # message= значение из окна ввода
+
+btn = Button(text=" OK ",command=click_button) # конструктор BUTTON
+btn.place(x=350,y=10)
+
+sel = IntVar()                          # переменная для хранения состояний виджетов
+sel.set(0)                              # присваиваем для sel значение 0
+rad1 = Radiobutton(window, text='Создать базы SUPPLIERS и SUPPLY_GROUP?',variable=sel,value=1)# sel.get()=1
+rad2 = Radiobutton(window, text='Вывод базы SUPPLIERS   ',variable=sel,value=2)  # sel.get()=2
+rad3 = Radiobutton(window, text='Вывод базы SUPPLY_GROUP',variable=sel,value=3)  # sel.get()=3
+rad4 = Radiobutton(window, text='Добавить запись?      ',variable=sel,value=4)   # sel.get()=4
+rad5 = Radiobutton(window, text='Найти запись?        ',variable=sel,value=5)    # sel.get()=5
+rad1.place(x=10, y=50)
+rad2.place(x=10, y=80)
+rad3.place(x=10, y=110)
+rad4.place(x=10, y=140)
+rad5.place(x=10, y=170)
+
+#########################   создаем таблицу  SUPPLIERS
+#btn.pack()                             # элемент BUTTON делается видимым
+window.mainloop()                        #отображение окна#
+con.close()
+###########################################
 
