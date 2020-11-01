@@ -1,5 +1,18 @@
 import sqlite3
 
+def inser_data():
+    l=list()
+    i_list=input("введите id ")
+    l.append(i_list)
+    i_list = input("введите name ")
+    l.append(i_list)
+    i_list = input("введите surname ")
+    l.append(i_list)
+    i_list = input("введите birth ")
+    l.append(i_list)
+    print(l)
+
+
 con=sqlite3.connect('database_worker_salary_post.db')
 cur=con.cursor()
 
@@ -10,11 +23,13 @@ cur.execute("""CREATE TABLE IF NOT EXISTS workers (
              name TEXT,
              surname TEXT,
              birth TEXT)""")
-#con.commit()
+
 
 worker=[('001','Ivan ','Ivanov','19-09-1980'),('002','Petya','Petrov','19-06-1976'),('003','Vasya','Vasilev','19-09-1980')]
 cur.executemany("""INSERT INTO workers (workerid,name,surname,birth) VALUES (?,?,?,?)""",worker)
 con.commit()
+
+
 
 n=('Vasya',)
 cur.execute("""SELECT * FROM workers WHERE name=?""",n)
@@ -33,6 +48,8 @@ print("└───────────┴───────────�
    #     print(i,"\t")
 
 con.close()
+
+inser_data()
 
 
 
